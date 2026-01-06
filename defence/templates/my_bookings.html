@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Bookings</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+            color: #212529;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .back-link {
+            text-decoration: none;
+            background: #0d6efd;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            background: #084298;
+        }
+
+        /* Booking Cards */
+        .bookings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+
+        .card p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        /* Status Badge */
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .approved {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .confirmed {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .cancelled {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* Empty State */
+        .empty {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <h2>📖 My Bookings</h2>
+    <a href="{{ url_for('home') }}" class="back-link">⬅ Back to Home</a>
+</div>
+
+{% if bookings %}
+<div class="bookings-container">
+    {% for booking, place in bookings %}
+    <div class="card">
+        <h3>{{ place.name }}</h3>
+        <p><strong>Type:</strong> {{ place.type|capitalize }}</p>
+        <p>
+            <strong>Status:</strong>
+            <span class="status {{ booking.status }}">
+                {{ booking.status }}
+            </span>
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    <p>No bookings yet.</p>
+</div>
+{% endif %}
+
+</body>
+</html>

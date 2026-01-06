@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TripWise - Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+    --primary: #0d6efd;
+    --primary-dark: #084298;
+    --secondary: #20c997;
+    --bg-light: #f4f6f9;
+    --text-dark: #212529;
+    --card-light: #ffffff;
+}
+
+/* Global */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    padding-bottom: 520px; /* space for fixed chatbot */
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+header h2 { margin: 0; font-weight: 600; }
+.logout-btn {
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    transition: 0.3s;
+}
+.logout-btn:hover { background: white; color: var(--primary); }
+
+/* Top Islands */
+.top-islands-section { padding: 25px 0; text-align: center; }
+.top-islands-section h2 { font-weight: 600; margin-bottom: 15px; }
+.horizontal-scroll-list { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px; }
+.island-card {
+    flex: 0 0 190px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.island-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.island-card img { height: 110px; border-radius: 8px; object-fit: cover; }
+.rank-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ffc107;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 3px 7px;
+}
+
+/* Tabs */
+.tab-buttons { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
+.tab-buttons button {
+    padding: 12px 32px; border-radius: 50px; border: none; font-weight: 500;
+    background: #dee2e6; transition: 0.3s;
+}
+.tab-buttons button.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 6px 15px rgba(13,110,253,0.4);
+}
+.tab-buttons button:hover { transform: translateY(-2px); }
+
+/* Filter */
+#places-filter-container { text-align: center; margin-bottom: 20px; }
+#places-filter { padding: 8px 14px; border-radius: 10px; }
+
+/* Cards */
+.content { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; padding-bottom: 40px; }
+.card {
+    width: 300px;
+    background: white;
+    border-radius: 15px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+.card img { height: 180px; border-radius: 12px; }
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    margin-top: 10px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.btn:hover { background: var(--primary-dark); }
+
+/* Chatbot (Fixed Position) */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 340px;
+    height: 480px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+}
+.chat-header {
+    padding: 12px;
+    color: white;
+    font-weight: 600;
+    background: linear-gradient(135deg, #0d6efd, #20c997);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+#chat-box { flex-grow: 1; overflow-y: auto; padding: 10px; }
+.input-area {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+}
+.input-area input {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+.send-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+#open-chat-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0d6efd, #20c997);
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    z-index: 9999;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>TripWise</h2>
+    <div>
+        Welcome, <b>{{ user }}</b> |
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a> |
+        <a href="{{ url_for('my_bookings') }}">📖 My Bookings</a>
+    </div>
+</header>
+
+<section class="top-islands-section">
+    <h2 id="top">🏆 Top Visited Islands (2025)</h2> 
+    <div class="horizontal-scroll-list">
+        {% for island in top_islands %}
+        <a href="{{ url_for('island_details', island_id=island.id) }}" class="island-card">
+            <div class="rank-badge">#{{ loop.index }}</div>
+            <img src="{{ url_for('static', filename='images/islands/' + island.image) }}" alt="{{ island.name }}">
+            <div class="card-content">
+                <h3>{{ island.name }}</h3>
+                <p>Visits: {{ "{:,.0f}".format(island.annual_visits) }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="tab-buttons">
+    <button class="active" id="islands-btn">🏝️ Islands</button>
+    <button id="places-btn">🗺️ Places</button>
+</div>
+
+<div id="places-filter-container">
+    <label for="places-filter">Filter by category:</label>
+    <select id="places-filter">
+        <option value="all">All</option>
+        <option value="hotel">Hotel</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="bar">Bar</option>
+    </select>
+</div>
+
+<div class="content" id="islands-content">
+    {% for island in islands %}
+    <div class="card">
+        <img src="{{ url_for('static', filename='images/islands/' ~ island.image) }}" alt="{{ island.name }}">
+        <h3>{{ island.name }}</h3>
+        <p>{{ island.description }}</p>
+        {% if island.latitude and island.longitude %}
+        <p style="font-size: 12px; color: #555;">Lat: {{ island.latitude }}, Lon: {{ island.longitude }}</p>
+        {% endif %}
+        <a class="btn" href="{{ url_for('island_details', island_id=island.id) }}">View Details</a>
+        <a class="btn" href="{{ url_for('plan_trip') }}?destination={{ island.id }}">🛫 Plan Trip</a>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content" id="places-content" style="display:none;">
+    {% for place in places %}
+    <div class="card place-card" data-category="{{ place.type|lower }}">
+        <img src="{{ url_for('static', filename='images/places/' ~ place.establishments_image) }}" alt="{{ place.name }}">
+        <h3>{{ place.name }}</h3>
+        <p>Category: {{ place.type|capitalize }}</p>
+        <p>{{ place.description }}</p>
+        <a class="btn" href="{{ url_for('place_details', place_id=place.id) }}">View Details</a>
+        <a class="btn" href="{{ url_for('book_place', place_id=place.id) }}">Book Now</a>
+        {% if place.official_website %}
+        <a class="btn" href="{{ place.official_website }}" target="_blank" rel="noopener noreferrer">Visit Official Website</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Chatbot -->
+<div class="chat-container" id="chat-container">
+  <div class="chat-header">
+    WiseBot Assistant
+    <div>
+      <button id="clear-btn" title="Clear chat">🗑️</button>
+      <button id="close-btn" title="Close chat">X</button>
+    </div>
+  </div>
+  <div id="chat-box" class="chat-box"></div>
+  <div class="input-area">
+    <input id="user-input" type="text" placeholder="Type a message...">
+    <button class="send-btn">Send</button>
+  </div>
+</div>
+
+<button id="open-chat-btn">WiseBot Chat</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Tabs
+    const islandsBtn = document.getElementById("islands-btn");
+    const placesBtn = document.getElementById("places-btn");
+    const islandsContent = document.getElementById("islands-content");
+    const placesContent = document.getElementById("places-content");
+    const placesFilterContainer = document.getElementById("places-filter-container");
+    const placesFilter = document.getElementById("places-filter");
+
+    function activateTab(tab) {
+        if(tab === "places"){
+            islandsContent.style.display = "none";
+            placesContent.style.display = "flex";
+            placesBtn.classList.add("active");
+            islandsBtn.classList.remove("active");
+            placesFilterContainer.style.display = "block";
+        } else {
+            islandsContent.style.display = "flex";
+            placesContent.style.display = "none";
+            islandsBtn.classList.add("active");
+            placesBtn.classList.remove("active");
+            placesFilterContainer.style.display = "none";
+        }
+    }
+    activateTab("islands");
+    islandsBtn.addEventListener("click", () => activateTab("islands"));
+    placesBtn.addEventListener("click", () => activateTab("places"));
+    placesFilter.addEventListener("change", () => {
+        const selected = placesFilter.value;
+        document.querySelectorAll(".place-card").forEach(card => {
+            card.style.display = (selected === "all" || card.dataset.category === selected) ? "block" : "none";
+        });
+    });
+
+    // Chatbot
+    const chat = document.getElementById("chat-container");
+    const openBtn = document.getElementById("open-chat-btn");
+    const closeBtn = document.getElementById("close-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.querySelector(".send-btn");
+
+    chat.style.display = "none";
+    openBtn.addEventListener("click", () => { chat.style.display = "flex"; openBtn.style.display = "none"; userInput.focus(); });
+    closeBtn.addEventListener("click", () => { chat.style.display = "none"; openBtn.style.display = "block"; });
+    clearBtn.addEventListener("click", () => chatBox.innerHTML = "");
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keydown", e => { if(e.key === "Enter") sendMessage(); });
+
+    async function sendMessage() {
+        const msg = userInput.value.trim();
+        if(!msg) return;
+        userInput.value = "";
+        append(msg, "user");
+        try {
+            const res = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            let bot = data.response || "⚠️ No reply.";
+            bot = bot.replace(/\*\*(.*?)\*\*/g,"<b>$1</b>").replace(/\*(.*?)\*/g,"<i>$1</i>").replace(/\n/g,"<br>");
+            append(bot, "bot", true);
+        } catch {
+            append("⚠️ Network error. Please try again.", "bot");
+        }
+    }
+
+    function append(msg, who, html=false) {
+        const div = document.createElement("div");
+        div.className = `message ${who}`;
+        html ? div.innerHTML = msg : div.textContent = msg;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+});
+</script>
+
+</body>
+</html>
