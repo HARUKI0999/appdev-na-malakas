@@ -6,6 +6,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+    .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Centers everything horizontally */
+    text-align: center;     /* Centers the text within h3 and p tags */
+    padding: 20px;
+    border: 1px solid #ddd; /* Example styling */
+    border-radius: 10px;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* Container for the buttons */
+.card-buttons {
+    display: flex;          /* Put buttons in a row */
+    flex-direction: row;    /* Ensure side-by-side */
+    gap: 10px;              /* Space between the two buttons */
+    margin-top: 15px;       /* Space above the buttons */
+    width: 100%;            /* Allows alignment within the card */
+    justify-content: center; /* Keeps the button row centered */
+}
+
+.btn {
+    flex: 1;                /* Optional: makes buttons equal width */
+    white-space: nowrap;    /* Prevents text from wrapping inside buttons */
+    text-decoration: none;
+    padding: 10px 15px;
+    /* ... your other button styles ... */
+}
 :root {
     --primary: #0d6efd;
     --primary-dark: #084298;
@@ -19,7 +52,8 @@
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    background: var(--bg-light);
+    background-color: rgb(10, 11, 12);
+    background: var(--bg-dark);
     color: var(--text-dark);
     padding-bottom: 520px; /* space for fixed chatbot */
 }
@@ -141,6 +175,48 @@ header h2 { margin: 0; font-weight: 600; }
     border-top-right-radius: 15px;
 }
 #chat-box { flex-grow: 1; overflow-y: auto; padding: 10px; }
+/* Chatbot Message Bubbles */
+#chat-box {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 12px; /* Space between bubbles */
+}
+
+.message {
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 80%;
+    word-wrap: break-word;
+    position: relative;
+}
+
+/* User Bubble (Right) */
+.message.user {
+    align-self: flex-end;
+    background-color: var(--primary);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+/* Bot Bubble (Left) */
+.message.bot {
+    align-self: flex-start;
+    background-color: #e9ecef;
+    color: #333;
+    border-bottom-left-radius: 2px;
+}
+
+/* Typing Indicator Styling */
+.typing-indicator {
+    padding: 5px 15px;
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+    display: none; /* Hidden by default */
+}
 .input-area {
     display: flex;
     gap: 8px;
@@ -219,19 +295,22 @@ header h2 { margin: 0; font-weight: 600; }
 </div>
 
 <div class="content" id="islands-content">
-    {% for island in islands %}
-    <div class="card">
+    {% for island in islands %}  <div class="card">
         <img src="{{ url_for('static', filename='images/islands/' ~ island.image) }}" alt="{{ island.name }}">
         <h3>{{ island.name }}</h3>
         <p>{{ island.description }}</p>
+        
         {% if island.latitude and island.longitude %}
         <p style="font-size: 12px; color: #555;">Lat: {{ island.latitude }}, Lon: {{ island.longitude }}</p>
         {% endif %}
-        <a class="btn" href="{{ url_for('island_details', island_id=island.id) }}">View Details</a>
-        <a class="btn" href="{{ url_for('plan_trip') }}?destination={{ island.id }}">🛫 Plan Trip</a>
+
+        <div class="button-group">
+            <a class="btn" href="{{ url_for('island_details', island_id=island.id) }}">View Details</a>
+            <a class="btn" href="{{ url_for('plan_trip') }}?destination={{ island.id }}">🛫 Plan Trip</a>
+        </div>
     </div>
-    {% endfor %}
-</div>
+
+    {% endfor %} </div>
 
 <div class="content" id="places-content" style="display:none;">
     {% for place in places %}
@@ -259,6 +338,9 @@ header h2 { margin: 0; font-weight: 600; }
     </div>
   </div>
   <div id="chat-box" class="chat-box"></div>
+  
+  <div id="typing-indicator" class="typing-indicator">WiseBot is typing...</div>
+
   <div class="input-area">
     <input id="user-input" type="text" placeholder="Type a message...">
     <button class="send-btn">Send</button>

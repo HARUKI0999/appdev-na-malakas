@@ -1,3 +1,3 @@
 from werkzeug.security import generate_password_hash
 
-print(generate_password_hash("owner123"))
+print(generate_password_hash("hashed_pw11"))
